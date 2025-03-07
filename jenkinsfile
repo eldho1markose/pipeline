@@ -1,0 +1,46 @@
+pipeline {
+    agent any  // Runs on any available Jenkins agent
+
+    environment {
+        IMAGE_NAME = "hello-world"
+        IMAGE_TAG = "v1.0"  // Change this for versioning
+        DOCKER_REGISTRY = "ftp://your-ftp-server/path/to/store"
+        FTP_USERNAME = "your-ftp-username"
+        FTP_PASSWORD = "your-ftp-password"
+    }
+
+    stages {
+        stage('Git Pull') {
+            steps {
+                echo 'Pulling latest code from GitHub...'
+                git branch: 'main', url: 'https://github.com/eldho1markose/jenkins.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building the Hello World project...'
+                bat 'echo Hello, Jenkins! > hello-world.txt'  // Windows batch command
+            }
+        }
+
+        stage('Generate Docker Image') {
+            steps {
+                echo 'Building Docker image...'
+                bat '''
+                docker build -t %IMAGE_NAME%:%IMAGE_TAG% .
+                docker save -o %IMAGE_NAME%.tar %IMAGE_NAME%:%IMAGE_TAG%
+                '''
+            }
+        }
+
+        stage('Publish to FTP') {
+            steps {
+                echo 'Uploading Docker image to FTP...'
+                bat '''
+                curl -T %IMAGE_NAME%.tar --user %FTP_USERNAME%:%FTP_PASSWORD% %DOCKER_REGISTRY%/%IMAGE_NAME%.tar
+                '''
+            }
+        }
+    }
+}

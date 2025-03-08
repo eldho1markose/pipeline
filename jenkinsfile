@@ -4,9 +4,9 @@ pipeline {
     environment {
         IMAGE_NAME = "hello-world"
         IMAGE_TAG = "v1.0"  // Change this for versioning
-        DOCKER_REGISTRY = "ftp://your-ftp-server/path/to/store"
-        FTP_USERNAME = "your-ftp-username"
-        FTP_PASSWORD = "your-ftp-password"
+        DOCKER_REGISTRY = "ftp://127.0.0.1/ftp_data"
+        FTP_USERNAME = "ftpuser"
+        FTP_PASSWORD = "Eldho"
     }
 
     stages {
